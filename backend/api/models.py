@@ -1,11 +1,10 @@
-from django.contrib.auth import get_user_model
+from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
-from colorfield.fields import ColorField
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
-
 
 class Ingredients(models.Model):
     name = models.CharField(verbose_name=_("Ingredient's name"), max_length=200)

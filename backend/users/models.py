@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class Users(AbstractUser):
+class User(AbstractUser):
     """Custom User model."""
 
     class Roles(models.TextChoices):
@@ -21,7 +21,7 @@ class Users(AbstractUser):
         _("username"),
         unique=True,
         max_length=150,
-        validators=[RegexValidator(regex=r"^[\w.@+-]+\z")],
+        validators=[RegexValidator(regex=r"^[\w.@+-]+\Z")],
         error_messages={
             "unique": _("A user with that username already " "exists."),
         },
