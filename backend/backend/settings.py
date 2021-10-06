@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from django.contrib.auth import get_user_model
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -129,8 +130,13 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'users.serializers.CustomUserCreateSerializer',
-       }
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer'
+    },
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+    },
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'HIDE_USERS': False,
 }
-
-
-
