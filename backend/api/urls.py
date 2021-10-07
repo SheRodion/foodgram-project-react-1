@@ -4,7 +4,8 @@ from . import views as vs
 
 router_v1 = routers.DefaultRouter()
 
-router_v1.register('users', vs.UserModelViewSet, basename='users')
+router_v1.register('subscribes', vs.SubscribesViewset, basename='subs')
+router_v1.register('recipes', vs.RecipesView, basename='recipes')
 
 urlpatterns = [
     re_path('', include(router_v1.urls))

@@ -41,7 +41,7 @@ class ShoppingCardAdmin(admin.ModelAdmin):
 
     @staticmethod
     def get_ingredients(obj):
-        return '\n'.join([_.name for _ in obj.inredients.all()])
+        return '\n'.join([_.name for _ in obj.ingredients.all()])
 
 
 @admin.register(Subscribes)

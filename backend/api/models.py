@@ -103,4 +103,4 @@ class ShoppingCard(models.Model):
         verbose_name = _('Shopping card')
 
     def __str__(self) -> str:
-        return _("{}'s shopping card".format(self.user.name))
+        return "{}'s shopping card".format(self.user.username)
