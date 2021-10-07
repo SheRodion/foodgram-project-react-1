@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
 from .models import (Favorites, Ingredients, Recipes, ShoppingCard, Subscribes,
-                     Tags)
+                     Tags, RecipeIngredient)
 
 
 @admin.register(Recipes)
@@ -11,6 +11,11 @@ class RecipesAdmin(admin.ModelAdmin):
     empty_value_display = _('-empty-')
     search_fields = ('name', 'author')
 
+@admin.register(RecipeIngredient)
+class RecipeIngredients(admin.ModelAdmin):
+    list_display = ('ingredients', 'recipes', 'amount')
+    empty_value_display = _('-empty-')
+    search_fields = ('ingredients', 'recipes', 'amount')
 
 @admin.register(Ingredients)
 class IngredientsAdmin(admin.ModelAdmin):

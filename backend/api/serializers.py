@@ -1,6 +1,12 @@
 from rest_framework import serializers, validators
-from .models import Subscribes, Tags, Recipes, Favorites, ShoppingCard
-from django.contrib.auth import get_user_model
+from .models import (
+    Subscribes,
+    Tags,
+    Recipes,
+    Favorites,
+    ShoppingCard,
+    RecipeIngredient,
+)
 from rest_framework.exceptions import ValidationError
 
 
@@ -18,7 +24,8 @@ class SubscribesSerializer(serializers.ModelSerializer):
             validators.UniqueTogetherValidator(
                 queryset=Subscribes.objects.all(),
                 fields=("subscriber", "subscribe_on"),
-            )]
+            )
+        ]
 
     def validate(self, data):
         print(data["subscribe_on"])
@@ -27,15 +34,27 @@ class SubscribesSerializer(serializers.ModelSerializer):
             raise ValidationError("User can't follow himself")
         return data
 
+
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeIngredient
+        fields = '__all__'
+
+
 class RecipesSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(many=True, source='recipe')
 
     def get_is_favorited(self, obj):
-        return Favorites.objects.filter(owner=self.context['request'].user, recipes__in=[obj.pk]).exists()
+        return Favorites.objects.filter(
+            owner=self.context['request'].user, recipes__in=[obj.pk]
+        ).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        return ShoppingCard.objects.filter(user=self.context['request'].user, ingredients__in=[obj.pk]).exists()
+        return ShoppingCard.objects.filter(
+            user=self.context['request'].user, ingredients__in=[obj.pk]
+        ).exists()
 
     class Meta:
         model = Recipes

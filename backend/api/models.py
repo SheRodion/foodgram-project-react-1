@@ -8,9 +8,12 @@ User = get_user_model()
 
 
 class Ingredients(models.Model):
-    name = models.CharField(verbose_name=_("Ingredient's name"), max_length=200)
-    measurement_unit = models.CharField(verbose_name=_("Measurement unit"),
-                                        max_length=200)
+    name = models.CharField(
+        verbose_name=_("Ingredient's name"), max_length=200
+    )
+    measurement_unit = models.CharField(
+        verbose_name=_("Measurement unit"), max_length=200
+    )
 
     class Meta:
         verbose_name = _('Ingredients')
@@ -34,17 +37,23 @@ class Tags(models.Model):
 
 
 class Recipes(models.Model):
-    ingredients = models.ManyToManyField(Ingredients)
-    author = models.ForeignKey(User, verbose_name=_("Recipe's author"),
-                               on_delete=models.SET_NULL, null=True)
-    tags = models.ManyToManyField(Tags, verbose_name=_("Recipe's tags"),
-                                  blank=True)
+    ingredients = models.ManyToManyField(Ingredients, through='RecipeIngredient')
+    author = models.ForeignKey(
+        User,
+        verbose_name=_("Recipe's author"),
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    tags = models.ManyToManyField(
+        Tags, verbose_name=_("Recipe's tags"), blank=True
+    )
     image = models.ImageField(verbose_name=_("Recipe's image"))
     name = models.CharField(verbose_name="Recipe's name", max_length=200)
     text = models.TextField(verbose_name="Recipe's description")
     cooking_time = models.IntegerField(
         verbose_name=_("Time for cooking (in minutes)"),
-        validators=[MinValueValidator(1)])
+        validators=[MinValueValidator(1)],
+    )
 
     class Meta:
         verbose_name = _('Recipes')
@@ -52,6 +61,31 @@ class Recipes(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class RecipeIngredient(models.Model):
+    ingredients = models.ForeignKey(
+        Ingredients,
+        related_name='ingredient',
+        on_delete=models.CASCADE,
+        verbose_name='Ingredient',
+    )
+    recipes = models.ForeignKey(
+        Recipes,
+        related_name='recipe',
+        on_delete=models.CASCADE,
+        verbose_name='Recipe',
+    )
+    amount = models.IntegerField(
+        validators=[MinValueValidator(1)],
+        verbose_name='Amount of recipe ingredient',
+    )
+
+    class Meta:
+        verbose_name = _('Recipe ingredient')
+
+    def __str__(self):
+        return _('Ingredients for recipe {}').format(self.recipes.name)
 
 
 class Subscribes(models.Model):
@@ -81,11 +115,14 @@ class Subscribes(models.Model):
 
 
 class Favorites(models.Model):
-    owner = models.ForeignKey(User,
-                              verbose_name=_("User's list of favorite recipes"),
-                              on_delete=models.CASCADE)
-    recipes = models.ManyToManyField(Recipes,
-                                     verbose_name=_("User's favorites recipes"))
+    owner = models.ForeignKey(
+        User,
+        verbose_name=_("User's list of favorite recipes"),
+        on_delete=models.CASCADE,
+    )
+    recipes = models.ManyToManyField(
+        Recipes, verbose_name=_("User's favorites recipes")
+    )
 
     class Meta:
         verbose_name = _('List of favorite recipes')
@@ -93,14 +130,18 @@ class Favorites(models.Model):
 
 
 class ShoppingCard(models.Model):
-    ingredients = models.ManyToManyField(Ingredients,
-                                         verbose_name=_(
-                                             'Ingredients for shopping card'))
-    user = models.ForeignKey(User, verbose_name=_("User's shopping card"),
-                             on_delete=models.CASCADE)
+    ingredients = models.ManyToManyField(
+        Ingredients, verbose_name=_('Ingredients for shopping card')
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("User's shopping card"),
+        on_delete=models.CASCADE,
+        related_name='user',
+    )
 
     class Meta:
         verbose_name = _('Shopping card')
 
     def __str__(self) -> str:
-        return "{}'s shopping card".format(self.user.username)
+        return _("{}'s shopping card").format(self.user.username)
