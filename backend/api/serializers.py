@@ -47,7 +47,7 @@ class SubscribesSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(source='ingredients.id')
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit')
@@ -99,14 +99,6 @@ class RecipesSerializer(serializers.ModelSerializer):
                                             amount=ingr['amount'])
         instance.save()
         return instance
-        # for nested_obj in ({'ingredients': 'recipe'}, {'tags': 'tags'}):
-        #     for k,v in nested_obj.items():
-        #         updated
-        #         nested_serializer = self.fields[k]
-        #         nested_instance = getattr(instance, k)
-        #         nested_update_data = validated_data.pop(v)
-        #         nested_serializer.update(nested_instance, nested_update_data)
-        # return super(RecipesSerializer, self).update(instance, validated_data)
 
     def get_is_favorited(self, obj):
         return Favorites.objects.filter(
