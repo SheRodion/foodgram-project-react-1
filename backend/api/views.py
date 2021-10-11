@@ -4,13 +4,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.models import Tags, Subscribes, Recipes
-from api.serializers import SubscribesSerializer, RecipesSerializer
+from api.serializers import SubscribesSerializer, RecipesSerializer, TagsSerializer
 
 
-class TagModelViewSet(viewsets.ReadOnlyModelViewSet):
+class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     model = Tags
-    serializer_class = None
+    serializer_class = TagsSerializer
     pagination_class = None
 
 class SubscribesViewset(viewsets.ModelViewSet):

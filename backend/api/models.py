@@ -44,6 +44,7 @@ class Recipes(models.Model):
         verbose_name=_("Recipe's author"),
         on_delete=models.SET_NULL,
         null=True,
+        related_name='author'
     )
     tags = models.ManyToManyField(
         Tags, verbose_name=_("Recipe's tags"), blank=True
