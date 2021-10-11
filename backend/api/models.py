@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from drf_extra_fields.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -47,7 +48,7 @@ class Recipes(models.Model):
     tags = models.ManyToManyField(
         Tags, verbose_name=_("Recipe's tags"), blank=True
     )
-    image = models.ImageField(verbose_name=_("Recipe's image"))
+    image = Base64ImageField()
     name = models.CharField(verbose_name="Recipe's name", max_length=200)
     text = models.TextField(verbose_name="Recipe's description")
     cooking_time = models.IntegerField(
