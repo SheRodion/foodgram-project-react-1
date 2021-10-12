@@ -13,8 +13,9 @@ ser = RecipesSerializer(data=data)
 
 if not ser.is_valid():
     print(ser.errors)
-
+print(ser)
 print(ser.validated_data)
+print(ser.data)
 
 
 print(ser.save())

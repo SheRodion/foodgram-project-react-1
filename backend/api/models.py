@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from drf_extra_fields.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -49,7 +48,7 @@ class Recipes(models.Model):
     tags = models.ManyToManyField(
         Tags, verbose_name=_("Recipe's tags"), blank=True
     )
-    image = Base64ImageField()
+    image = models.ImageField()
     name = models.CharField(verbose_name="Recipe's name", max_length=200)
     text = models.TextField(verbose_name="Recipe's description")
     cooking_time = models.IntegerField(
@@ -132,8 +131,8 @@ class Favorites(models.Model):
 
 
 class ShoppingCard(models.Model):
-    ingredients = models.ManyToManyField(
-        Ingredients, verbose_name=_('Ingredients for shopping card')
+    recipe = models.ManyToManyField(
+        Recipes, verbose_name=_('Recipe for shopping card')
     )
     user = models.ForeignKey(
         User,

@@ -40,13 +40,13 @@ class FavoritesAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCard)
 class ShoppingCardAdmin(admin.ModelAdmin):
-    list_display = ('user', 'get_ingredients')
+    list_display = ('user', 'get_recipes')
     empty_value_display = _('-empty-')
-    search_fields = ('user', 'get_ingredients')
+    search_fields = ('user', 'get_recipes')
 
     @staticmethod
-    def get_ingredients(obj):
-        return '\n'.join([_.name for _ in obj.ingredients.all()])
+    def get_recipes(obj):
+        return '\n'.join([_.name for _ in obj.recipe.all()])
 
 
 @admin.register(Subscribes)

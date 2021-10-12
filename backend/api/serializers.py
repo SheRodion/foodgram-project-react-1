@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from django.core.exceptions import ObjectDoesNotExist
+from drf_extra_fields.fields import Base64ImageField
 
 from rest_framework import serializers, validators
 from .models import (
@@ -47,7 +48,7 @@ class SubscribesSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='ingredients.id')
+    id = serializers.PrimaryKeyRelatedField(source='ingredients.id', queryset=Ingredients.objects.all())
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit')
@@ -65,6 +66,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(many=True, source='recipe')
     tags = TagsSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
+    image = Base64ImageField(use_url=True)
 
     def create(self, validated_data):
         user = None
@@ -77,8 +79,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         for ingr in ingredients:
-            i = get_object_or_404(Ingredients, id=ingr['id'])
-            RecipeIngredient.objects.create(recipes=recipe, ingredients=i,
+            RecipeIngredient.objects.create(recipes=recipe, ingredients=ingr['ingredients']['id'],
                                             amount=ingr['amount'])
         return recipe
 
@@ -107,9 +108,17 @@ class RecipesSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         return ShoppingCard.objects.filter(
-            user=self.context['request'].user, ingredients__in=[obj.pk]
+            user=self.context['request'].user, recipe__in=[obj.pk]
         ).exists()
 
     class Meta:
         model = Recipes
         fields = '__all__'
+
+
+
+class RecipeShoppingCardSerializer(RecipesSerializer):
+    class Meta:
+        model = Recipes
+        fields = ('id', 'name', 'image', 'cooking_time')
+
