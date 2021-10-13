@@ -11,10 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
+from django.db.models import Sum
+from reportlab.lib.units import cm
 
-
-
-from api.models import Tags, Subscribes, Recipes, ShoppingCard
+from api.models import Tags, Subscribes, Recipes, ShoppingCard, Ingredients
 from api.serializers import SubscribesSerializer, RecipesSerializer, TagsSerializer, RecipeShoppingCardSerializer
 
 
@@ -65,10 +65,14 @@ def shopping_card(request, **kwargs):
 
 @api_view(['GET'])
 def download_shopping_card(request, **kwargs):
+    result_ingr = Recipes.objects.filter(shopping_card__user=request.user).order_by('ingredients__name').values('ingredients__name', 'ingredients__measurement_unit').annotate(total=Sum('recipe__amount'))
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
     p = canvas.Canvas(response)
-    p.drawString(100, 100, "Hello world.")
+    textobject = p.beginText(2 * cm, 29.7 * cm - 2 * cm)
+    for result in result_ingr:
+        textobject.textLine(f"{result['ingredients__name']}, {result['ingredients__measurement_unit']} --- {result['total']}")
+    p.drawText(textobject)
     p.showPage()
     p.save()
     return response

@@ -133,12 +133,12 @@ class Favorites(models.Model):
 class ShoppingCard(models.Model):
     recipe = models.ManyToManyField(
         Recipes, verbose_name=_('Recipe for shopping card')
-    )
+    ,related_name='shopping_card')
     user = models.ForeignKey(
         User,
         verbose_name=_("User's shopping card"),
         on_delete=models.CASCADE,
-        related_name='user',
+        related_name='shopping_card',
     )
 
     class Meta:
