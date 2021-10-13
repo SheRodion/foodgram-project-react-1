@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from django.core.exceptions import ObjectDoesNotExist
 from drf_extra_fields.fields import Base64ImageField
+from users.serializers import CustomUserSerializer
+from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, validators
 from .models import (
@@ -103,7 +105,7 @@ class RecipesSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         return Favorites.objects.filter(
-            owner=self.context['request'].user, recipes__in=[obj.pk]
+            user=self.context['request'].user, recipe__in=[obj.pk]
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
@@ -117,8 +119,25 @@ class RecipesSerializer(serializers.ModelSerializer):
 
 
 
-class RecipeShoppingCardSerializer(RecipesSerializer):
+class RecipeShortSerializer(RecipesSerializer):
     class Meta:
         model = Recipes
         fields = ('id', 'name', 'image', 'cooking_time')
 
+
+class UserSubscribeSerializer(CustomUserSerializer):
+    recipes = RecipeShortSerializer(source='author', read_only=True, many=True)
+    recipes_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_recipes_count(self, obj):
+        return Recipes.objects.filter(author=obj).count()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+
+
+class IngredientsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredients
+        fields = '__all__'

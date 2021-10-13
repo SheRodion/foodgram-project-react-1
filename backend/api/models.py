@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 User = get_user_model()
 
 
@@ -116,18 +117,18 @@ class Subscribes(models.Model):
 
 
 class Favorites(models.Model):
-    owner = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         verbose_name=_("User's list of favorite recipes"),
         on_delete=models.CASCADE,
     )
-    recipes = models.ManyToManyField(
+    recipe = models.ManyToManyField(
         Recipes, verbose_name=_("User's favorites recipes")
     )
 
     class Meta:
         verbose_name = _('List of favorite recipes')
-        ordering = ('recipes__name',)
+        ordering = ('recipe__name',)
 
 
 class ShoppingCard(models.Model):

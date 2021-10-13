@@ -33,9 +33,9 @@ class TagsAdmin(admin.ModelAdmin):
 
 @admin.register(Favorites)
 class FavoritesAdmin(admin.ModelAdmin):
-    list_display = ('owner',)
+    list_display = ('user',)
     empty_value_display = _('-empty-')
-    search_fields = ('owner',)
+    search_fields = ('user',)
 
 
 @admin.register(ShoppingCard)
