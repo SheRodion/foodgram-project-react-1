@@ -1,4 +1,5 @@
 from django.urls import include, path
+
 from api.views import ListSubscribesView, get_or_delete_sub
 
 urlpatterns = [

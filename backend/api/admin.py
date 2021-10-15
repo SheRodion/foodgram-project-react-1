@@ -1,15 +1,22 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import (Favorites, Ingredients, Recipes, ShoppingCard, Subscribes,
-                     Tags, RecipeIngredient)
+from .models import (Favorites, Ingredients, RecipeIngredient, Recipes,
+                     ShoppingCard, Subscribes, Tags)
 
 
 @admin.register(Recipes)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('author', 'name')
     empty_value_display = _('-empty-')
-    search_fields = ('name', 'author')
+    list_filter = ('name', 'author', 'tags')
+
+    @admin.display(description='Numbers of additions')
+    def get_number_of_adittions(self, obj):
+        """Adds custom field - how many times recipe was added to favorites."""
+
+        return Favorites.objects.filter(recipe__in=[obj.pk]).count
+
 
 @admin.register(RecipeIngredient)
 class RecipeIngredients(admin.ModelAdmin):
@@ -17,11 +24,12 @@ class RecipeIngredients(admin.ModelAdmin):
     empty_value_display = _('-empty-')
     search_fields = ('ingredients', 'recipes', 'amount')
 
+
 @admin.register(Ingredients)
 class IngredientsAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'measurement_unit')
     empty_value_display = _('-empty-')
-    search_fields = ('name',)
+    list_filter = ('name',)
 
 
 @admin.register(Tags)
@@ -37,6 +45,10 @@ class FavoritesAdmin(admin.ModelAdmin):
     empty_value_display = _('-empty-')
     search_fields = ('user',)
 
+    @staticmethod
+    def get_recipes(obj):
+        """Show recipes in favorites"""
+        return '\n'.join([_.name for _ in obj.recipe.all()])
 
 @admin.register(ShoppingCard)
 class ShoppingCardAdmin(admin.ModelAdmin):
@@ -46,6 +58,7 @@ class ShoppingCardAdmin(admin.ModelAdmin):
 
     @staticmethod
     def get_recipes(obj):
+        """Show recipes in shopping card"""
         return '\n'.join([_.name for _ in obj.recipe.all()])
 
 

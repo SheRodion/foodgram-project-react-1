@@ -1,22 +1,21 @@
-from collections import OrderedDict
-from django.core.exceptions import ObjectDoesNotExist
-from drf_extra_fields.fields import Base64ImageField
-from users.serializers import CustomUserSerializer
 from django.contrib.auth import get_user_model
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, validators
+from rest_framework.exceptions import ValidationError
+
+from users.serializers import CustomUserSerializer
+
 from .models import (
+    Favorites,
+    Ingredients,
+    RecipeIngredient,
+    Recipes,
+    ShoppingCard,
     Subscribes,
     Tags,
-    Recipes,
-    Favorites,
-    ShoppingCard,
-    RecipeIngredient,
-    Ingredients
 )
-from users.serializers import CustomUserSerializer
-from rest_framework.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -25,6 +24,7 @@ class TagsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_internal_value(self, data):
+        """Show all tag fields by tag id from request"""
         try:
             tag = Tags.objects.get(id=data)
         except ObjectDoesNotExist:
@@ -44,16 +44,20 @@ class SubscribesSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
+        """User can not subscribe himself."""
         if data["subscribe_on"] == self.context["request"].user:
             raise ValidationError("User can't follow himself")
         return data
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(source='ingredients.id', queryset=Ingredients.objects.all())
+    id = serializers.PrimaryKeyRelatedField(
+        source='ingredients.id', queryset=Ingredients.objects.all()
+    )
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredients.measurement_unit')
+        source='ingredients.measurement_unit'
+    )
     amount = serializers.IntegerField()
 
     class Meta:
@@ -71,6 +75,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     image = Base64ImageField(use_url=True)
 
     def create(self, validated_data):
+        """Create recipe with nested tag and ingredients/"""
         user = None
         request = self.context.get("request")
         if request and hasattr(request, "user"):
@@ -81,12 +86,15 @@ class RecipesSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         for ingr in ingredients:
-            RecipeIngredient.objects.create(recipes=recipe, ingredients=ingr['ingredients']['id'],
-                                            amount=ingr['amount'])
+            RecipeIngredient.objects.create(
+                recipes=recipe,
+                ingredients=ingr['ingredients']['id'],
+                amount=ingr['amount'],
+            )
         return recipe
 
     def update(self, instance, validated_data):
-
+        """Update recipe with nested M2M models."""
         tags_updated = validated_data.pop('tags')
         ingr_updated = validated_data.pop('recipe')
 
@@ -98,25 +106,31 @@ class RecipesSerializer(serializers.ModelSerializer):
             instance.tags.add(tag)
         for ingr in ingr_updated:
             i = get_object_or_404(Ingredients, id=ingr['id'])
-            RecipeIngredient.objects.create(recipes=instance, ingredients=i,
-                                            amount=ingr['amount'])
+            RecipeIngredient.objects.create(
+                recipes=instance, ingredients=i, amount=ingr['amount']
+            )
         instance.save()
         return instance
 
     def get_is_favorited(self, obj):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
         return Favorites.objects.filter(
-            user=self.context['request'].user, recipe__in=[obj.pk]
+            user=user, recipe__in=[obj.pk]
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
         return ShoppingCard.objects.filter(
-            user=self.context['request'].user, recipe__in=[obj.pk]
+            user=user, recipe__in=[obj.pk]
         ).exists()
 
     class Meta:
         model = Recipes
         fields = '__all__'
-
 
 
 class RecipeShortSerializer(RecipesSerializer):
@@ -126,6 +140,8 @@ class RecipeShortSerializer(RecipesSerializer):
 
 
 class UserSubscribeSerializer(CustomUserSerializer):
+    """Serializer only for return right representation after subscribe."""
+
     recipes = RecipeShortSerializer(source='author', read_only=True, many=True)
     recipes_count = serializers.SerializerMethodField(read_only=True)
 
@@ -134,7 +150,16 @@ class UserSubscribeSerializer(CustomUserSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
+        )
 
 
 class IngredientsSerializer(serializers.ModelSerializer):

@@ -1,7 +1,8 @@
-from django.urls import path, include, re_path
+from django.urls import include, path, re_path
 from rest_framework import routers
-from . import views as vs
 from rest_framework.urlpatterns import format_suffix_patterns
+
+from . import views as vs
 
 router = routers.DefaultRouter()
 
@@ -9,6 +10,7 @@ router.register('subscribes', vs.SubscribesViewSet, basename='subs')
 router.register('recipes', vs.RecipesView, basename='recipes')
 router.register('tags', vs.TagsViewSet, basename='tags')
 router.register('ingredients', vs.IngredientsViewSet, basename='ingredients')
+
 
 
 urlpatterns = [

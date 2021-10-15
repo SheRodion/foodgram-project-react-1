@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-
 User = get_user_model()
 
 
@@ -38,13 +37,15 @@ class Tags(models.Model):
 
 
 class Recipes(models.Model):
-    ingredients = models.ManyToManyField(Ingredients, through='RecipeIngredient')
+    ingredients = models.ManyToManyField(
+        Ingredients, through='RecipeIngredient'
+    )
     author = models.ForeignKey(
         User,
         verbose_name=_("Recipe's author"),
         on_delete=models.SET_NULL,
         null=True,
-        related_name='author'
+        related_name='author',
     )
     tags = models.ManyToManyField(
         Tags, verbose_name=_("Recipe's tags"), blank=True
@@ -91,6 +92,8 @@ class RecipeIngredient(models.Model):
 
 
 class Subscribes(models.Model):
+    """Table for using 'amount' field in ingredients."""
+
     subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -121,9 +124,12 @@ class Favorites(models.Model):
         User,
         verbose_name=_("User's list of favorite recipes"),
         on_delete=models.CASCADE,
+        related_name='recipes_of_user_favorite',
     )
     recipe = models.ManyToManyField(
-        Recipes, verbose_name=_("User's favorites recipes")
+        Recipes,
+        verbose_name=_("User's favorites recipes"),
+        related_name='recipes_in_favorite',
     )
 
     class Meta:
@@ -133,8 +139,10 @@ class Favorites(models.Model):
 
 class ShoppingCard(models.Model):
     recipe = models.ManyToManyField(
-        Recipes, verbose_name=_('Recipe for shopping card')
-    ,related_name='shopping_card')
+        Recipes,
+        verbose_name=_('Recipe for shopping card'),
+        related_name='recipe_in_shopping_card',
+    )
     user = models.ForeignKey(
         User,
         verbose_name=_("User's shopping card"),
