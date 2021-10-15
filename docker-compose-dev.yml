@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+    db:
+        image: postgres:12.4-alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            - ./backend/.env
+        environment:
+            POSTGRES_USER: pasha
+            POSTGRES_PASSWORD: pasha
+#        ports:
+#            - "5432:5432"
+    nginx:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./docker/nginx/Dockerfile
+        ports:
+            - 80:80
+        volumes:
+            - static_volume:/app/backend/static
+            - ./docker/nginx/development:/etc/nginx/conf.d
+        depends_on:
+            - backend
+    backend:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: ./docker/backend/Dockerfile
+        entrypoint: /app/docker/backend/wsgi-entrypoint.sh
+        volumes:
+            - static_volume:/app/backend/static
+        expose:
+            - 8000
+        depends_on:
+            -   db
+volumes:
+    static_volume: {}
+    postgres_data:

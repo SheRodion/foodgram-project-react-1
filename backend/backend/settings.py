@@ -67,8 +67,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'PORT': '5436',
+        'HOST': 'db',
+        'PORT': '5432',
         "NAME": 'pasha',
         'USER': 'pasha',
         'PASSWORD': 'pasha'
@@ -107,6 +107,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 
