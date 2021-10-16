@@ -10,6 +10,6 @@ COPY . .
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
-COPY /static/redoc.yaml /static/
+#COPY ../static/redoc.yaml /static/
 
-CMD gunicorn api_yamdb.wsgi:application --bind 0.0.0.0:8000
+CMD gunicorn backend.wsgi:application --bind 0.0.0.0:8000
