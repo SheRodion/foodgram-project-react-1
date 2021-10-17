@@ -1,18 +1,19 @@
 from pathlib import Path
-
+import os
+from dotenv import load_dotenv
 from django.contrib.auth import get_user_model
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+SECRET_KEY = os.getenv("SECRET_KEY", "DEFAULT")
 SECRET_KEY = 'django-insecure-6*7)kyf*9g%a4)2-w*-$hj@6*%9%-6lkdun!-%jlmsahh-321b'
 
 
-DEBUG = True
+DEBUG = int(os.environ.get('DEBUG', default=0))
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split()
 
 # Application definition
 
@@ -66,12 +67,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'PORT': '5436',
-        "NAME": 'pasha',
-        'USER': 'pasha',
-        'PASSWORD': 'pasha'
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -94,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -107,6 +108,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 

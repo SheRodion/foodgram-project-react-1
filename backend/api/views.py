@@ -30,12 +30,14 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredients.objects.all()
     model = Ingredients
     serializer_class = IngredientsSerializer
+    pagination_class = None
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     model = Tags
     serializer_class = TagsSerializer
+    pagination_class = None
 
 
 class SubscribesViewSet(viewsets.ModelViewSet):
