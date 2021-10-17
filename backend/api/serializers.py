@@ -105,7 +105,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         for tag in tags_updated:
             instance.tags.add(tag)
         for ingr in ingr_updated:
-            i = get_object_or_404(Ingredients, id=ingr['id'])
+            i = get_object_or_404(Ingredients, id=ingr['ingredients']['id'].id)
             RecipeIngredient.objects.create(
                 recipes=instance, ingredients=i, amount=ingr['amount']
             )
