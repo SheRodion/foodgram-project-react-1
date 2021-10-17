@@ -97,6 +97,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         """Update recipe with nested M2M models."""
         tags_updated = validated_data.pop('tags')
         ingr_updated = validated_data.pop('recipe')
+        print(ingr_updated)
 
         for item in validated_data:
             if Recipes._meta.get_field(item):
