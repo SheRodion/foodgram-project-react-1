@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -19,9 +18,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Ingredients',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, verbose_name="Ingredient's name")),
-                ('measurement_unit', models.CharField(max_length=200, verbose_name='Measurement unit')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=200,
+                                          verbose_name="Ingredient's name")),
+                ('measurement_unit', models.CharField(max_length=200,
+                                                      verbose_name='Measurement unit')),
             ],
             options={
                 'verbose_name': 'Ingredients',
@@ -31,9 +33,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RecipeIngredient',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)], verbose_name='Amount of recipe ingredient')),
-                ('ingredients', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredient', to='api.ingredients', verbose_name='Ingredient')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('amount', models.IntegerField(
+                    validators=[django.core.validators.MinValueValidator(1)],
+                    verbose_name='Amount of recipe ingredient')),
+                ('ingredients',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='ingredient',
+                                   to='api.ingredients',
+                                   verbose_name='Ingredient')),
             ],
             options={
                 'verbose_name': 'Recipe ingredient',
@@ -42,13 +51,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Recipes',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
                 ('image', models.ImageField(upload_to='')),
-                ('name', models.CharField(max_length=200, verbose_name="Recipe's name")),
+                ('name', models.CharField(max_length=200,
+                                          verbose_name="Recipe's name")),
                 ('text', models.TextField(verbose_name="Recipe's description")),
-                ('cooking_time', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)], verbose_name='Time for cooking (in minutes)')),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='author', to=settings.AUTH_USER_MODEL, verbose_name="Recipe's author")),
-                ('ingredients', models.ManyToManyField(through='api.RecipeIngredient', to='api.Ingredients')),
+                ('cooking_time', models.IntegerField(
+                    validators=[django.core.validators.MinValueValidator(1)],
+                    verbose_name='Time for cooking (in minutes)')),
+                ('author', models.ForeignKey(null=True,
+                                             on_delete=django.db.models.deletion.SET_NULL,
+                                             related_name='author',
+                                             to=settings.AUTH_USER_MODEL,
+                                             verbose_name="Recipe's author")),
+                ('ingredients',
+                 models.ManyToManyField(through='api.RecipeIngredient',
+                                        to='api.Ingredients')),
             ],
             options={
                 'verbose_name': 'Recipes',
@@ -58,9 +77,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Tags',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, verbose_name="Tag's name")),
-                ('color', colorfield.fields.ColorField(default='#FFFFFF', max_length=7, verbose_name='Hex code for tag color')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('name',
+                 models.CharField(max_length=200, verbose_name="Tag's name")),
+                ('color',
+                 colorfield.fields.ColorField(default='#FFFFFF', max_length=7,
+                                              verbose_name='Hex code for tag color')),
                 ('slug', models.SlugField(max_length=200, verbose_name='Slug')),
             ],
             options={
@@ -71,9 +94,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Subscribes',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subscribe_on', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subscribe_on', to=settings.AUTH_USER_MODEL, verbose_name='subscribing user')),
-                ('subscriber', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subscriber', to=settings.AUTH_USER_MODEL, verbose_name='subscriber')),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('subscribe_on',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='subscribe_on',
+                                   to=settings.AUTH_USER_MODEL,
+                                   verbose_name='subscribing user')),
+                ('subscriber',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='subscriber',
+                                   to=settings.AUTH_USER_MODEL,
+                                   verbose_name='subscriber')),
             ],
             options={
                 'verbose_name': 'Follow',
@@ -82,9 +114,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ShoppingCard',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('recipe', models.ManyToManyField(to='api.Recipes', verbose_name='Recipe for shopping card')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user', to=settings.AUTH_USER_MODEL, verbose_name="User's shopping card")),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('recipe', models.ManyToManyField(to='api.Recipes',
+                                                  verbose_name='Recipe for shopping card')),
+                ('user',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='user',
+                                   to=settings.AUTH_USER_MODEL,
+                                   verbose_name="User's shopping card")),
             ],
             options={
                 'verbose_name': 'Shopping card',
@@ -93,19 +131,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='recipes',
             name='tags',
-            field=models.ManyToManyField(blank=True, to='api.Tags', verbose_name="Recipe's tags"),
+            field=models.ManyToManyField(blank=True, to='api.Tags',
+                                         verbose_name="Recipe's tags"),
         ),
         migrations.AddField(
             model_name='recipeingredient',
             name='recipes',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipe', to='api.recipes', verbose_name='Recipe'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='recipe', to='api.recipes',
+                                    verbose_name='Recipe'),
         ),
         migrations.CreateModel(
             name='Favorites',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name="User's list of favorite recipes")),
-                ('recipes', models.ManyToManyField(to='api.Recipes', verbose_name="User's favorites recipes")),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True,
+                                           serialize=False, verbose_name='ID')),
+                ('owner',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   to=settings.AUTH_USER_MODEL,
+                                   verbose_name="User's list of favorite recipes")),
+                ('recipes', models.ManyToManyField(to='api.Recipes',
+                                                   verbose_name="User's favorites recipes")),
             ],
             options={
                 'verbose_name': 'List of favorite recipes',
@@ -114,6 +160,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='subscribes',
-            constraint=models.UniqueConstraint(fields=('subscriber', 'subscribe_on'), name='unique_subscribe'),
+            constraint=models.UniqueConstraint(
+                fields=('subscriber', 'subscribe_on'), name='unique_subscribe'),
         ),
     ]

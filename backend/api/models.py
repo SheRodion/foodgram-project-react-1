@@ -9,10 +9,10 @@ User = get_user_model()
 
 class Ingredients(models.Model):
     name = models.CharField(
-        verbose_name=_("Ingredient's name"), max_length=200
+        verbose_name=_('Ingredient\'s name'), max_length=200
     )
     measurement_unit = models.CharField(
-        verbose_name=_("Measurement unit"), max_length=200
+        verbose_name=_('Measurement unit'), max_length=200
     )
 
     class Meta:
@@ -24,9 +24,9 @@ class Ingredients(models.Model):
 
 
 class Tags(models.Model):
-    name = models.CharField(verbose_name=_("Tag's name"), max_length=200)
-    color = ColorField(max_length=7, verbose_name="Hex code for tag color")
-    slug = models.SlugField(verbose_name=_('Slug'), max_length=200)
+    name = models.CharField(verbose_name=_('Tag\'s name'), max_length=200)
+    color = ColorField(max_length=7, verbose_name='Hex code for tag color')
+    slug = models.SlugField(verbose_name=_('Slug'), max_length=50)
 
     class Meta:
         verbose_name = _('Tags')
@@ -42,20 +42,21 @@ class Recipes(models.Model):
     )
     author = models.ForeignKey(
         User,
-        verbose_name=_("Recipe's author"),
+        verbose_name=_('Recipe\'s author'),
         on_delete=models.SET_NULL,
         null=True,
         related_name='author',
     )
     tags = models.ManyToManyField(
-        Tags, verbose_name=_("Recipe's tags"), blank=True
+        Tags, verbose_name=_('Recipe\'s tags'), blank=True
     )
     image = models.ImageField()
-    name = models.CharField(verbose_name="Recipe's name", max_length=200)
-    text = models.TextField(verbose_name="Recipe's description")
-    cooking_time = models.IntegerField(
-        verbose_name=_("Time for cooking (in minutes)"),
-        validators=[MinValueValidator(1)],
+    name = models.CharField(verbose_name='Recipe\'s name', max_length=200)
+    text = models.TextField(verbose_name='Recipe\'s description')
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name=_('Time for cooking (in minutes)'),
+        validators=(MinValueValidator(1, message=_('Cooking time can not be '
+                                                   'less than 1 minute')),),
     )
 
     class Meta:
@@ -79,8 +80,10 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Recipe',
     )
-    amount = models.IntegerField(
-        validators=[MinValueValidator(1)],
+    amount = models.SmallIntegerField(
+        validators=(MinValueValidator(1, message=_('Amount of ingredient can '
+                                                   'not be '
+                                                   'less than 1 minute')),),
         verbose_name='Amount of recipe ingredient',
     )
 
@@ -108,12 +111,12 @@ class Subscribes(models.Model):
     )
 
     class Meta:
-        verbose_name = "Follow"
-        constraints = [
+        verbose_name = 'Follow'
+        constraints = (
             models.UniqueConstraint(
-                fields=['subscriber', 'subscribe_on'], name='unique_subscribe'
-            )
-        ]
+                fields=('subscriber', 'subscribe_on'), name='unique_subscribe'
+            ),
+        )
 
     def __str__(self) -> str:
         return f"{self.subscriber} subscribed on {self.subscribe_on}"
@@ -122,13 +125,13 @@ class Subscribes(models.Model):
 class Favorites(models.Model):
     user = models.ForeignKey(
         User,
-        verbose_name=_("User's list of favorite recipes"),
+        verbose_name=_('User\'s list of favorite recipes'),
         on_delete=models.CASCADE,
         related_name='recipes_of_user_favorite',
     )
     recipe = models.ManyToManyField(
         Recipes,
-        verbose_name=_("User's favorites recipes"),
+        verbose_name=_('User\'s favorites recipes'),
         related_name='recipes_in_favorite',
     )
 
@@ -145,7 +148,7 @@ class ShoppingCard(models.Model):
     )
     user = models.ForeignKey(
         User,
-        verbose_name=_("User's shopping card"),
+        verbose_name=_('User\'s shopping card'),
         on_delete=models.CASCADE,
         related_name='shopping_card',
     )
@@ -154,4 +157,4 @@ class ShoppingCard(models.Model):
         verbose_name = _('Shopping card')
 
     def __str__(self) -> str:
-        return _("{}'s shopping card").format(self.user.username)
+        return _('{}\'s shopping card').format(self.user.username)
