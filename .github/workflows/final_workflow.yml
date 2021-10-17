@@ -57,6 +57,7 @@ jobs:
       - name: Push to dockerhub
         uses: docker/build-push-action@v2
         with:
+          context: ./backend/
           push: true
           tags: keplian/final
 
@@ -75,11 +76,12 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          stack_file_name: docker-compose.yaml
+          context: ./infra/
+          stack_file_name: docker-compose.yml
           script: |
-            sudo docker pull keplian/sprint17
+            sudo docker pull keplian/final
             sudo docker-compose stop
-            sudo docker-compose rm web
+            sudo docker-compose rm backend
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
