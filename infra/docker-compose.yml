@@ -13,9 +13,7 @@ services:
 #  #        ports:
 #  #            - "5432:5432"
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: keplian/final-frontend
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
@@ -34,9 +32,10 @@ services:
       - frontend
 
   backend:
-    build:
-      context: ../backend a
-      dockerfile: Dockerfile
+    image: keplian/final-backend
+#    build:
+#      context: ../backend
+#      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_volume:/app/static/
