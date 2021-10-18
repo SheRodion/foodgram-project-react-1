@@ -6,7 +6,6 @@ from rest_framework import serializers, validators
 from rest_framework.exceptions import ValidationError
 
 from users.serializers import CustomUserSerializer
-
 from .models import (
     Favorites,
     Ingredients,
@@ -36,12 +35,12 @@ class SubscribesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribes
         fields = '__all__'
-        validators = [
+        validators = (
             validators.UniqueTogetherValidator(
                 queryset=Subscribes.objects.all(),
                 fields=("subscriber", "subscribe_on"),
-            )
-        ]
+            ),
+        )
 
     def validate(self, data):
         """User can not subscribe himself."""

@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('api', '0001_initial'),
@@ -15,7 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='favorites',
-            options={'ordering': ('recipe__name',), 'verbose_name': 'List of favorite recipes'},
+            options={'ordering': ('recipe__name',),
+                     'verbose_name': 'List of favorite recipes'},
         ),
         migrations.RenameField(
             model_name='favorites',
@@ -25,11 +25,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='shoppingcard',
             name='recipe',
-            field=models.ManyToManyField(related_name='shopping_card', to='api.Recipes', verbose_name='Recipe for shopping card'),
+            field=models.ManyToManyField(related_name='shopping_card',
+                                         to='api.Recipes',
+                                         verbose_name='Recipe for shopping card'),
         ),
         migrations.AlterField(
             model_name='shoppingcard',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='shopping_card', to=settings.AUTH_USER_MODEL, verbose_name="User's shopping card"),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='shopping_card',
+                                    to=settings.AUTH_USER_MODEL,
+                                    verbose_name="User's shopping card"),
         ),
     ]

@@ -57,8 +57,17 @@ jobs:
       - name: Push to dockerhub
         uses: docker/build-push-action@v2
         with:
+          context: ./backend/
+          file: ./backend/Dockerfile
           push: true
-          tags: keplian/final
+          tags: keplian/final-back
+      - name: Push to dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          context: ./frontend/
+          file: ./frontend/Dockerfile
+          push: true
+          tags: keplian/final-front
 
   deploy:
     name: Deploy image on server
@@ -75,11 +84,12 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          stack_file_name: docker-compose.yaml
+          stack_file_name: ./docker-compose.yml
           script: |
-            sudo docker pull keplian/sprint17
+            sudo docker pull keplian/final-back
+            sudo docker pull keplian/final-front
             sudo docker-compose stop
-            sudo docker-compose rm web
+            sudo docker-compose rm backend
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env

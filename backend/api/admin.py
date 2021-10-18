@@ -47,8 +47,9 @@ class FavoritesAdmin(admin.ModelAdmin):
 
     @staticmethod
     def get_recipes(obj):
-        """Show recipes in favorites"""
+        """Show recipes in favorites."""
         return '\n'.join([_.name for _ in obj.recipe.all()])
+
 
 @admin.register(ShoppingCard)
 class ShoppingCardAdmin(admin.ModelAdmin):

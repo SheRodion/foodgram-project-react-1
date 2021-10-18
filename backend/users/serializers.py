@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from api.models import Subscribes
@@ -9,6 +9,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = get_user_model()
         fields = ('email', 'username', 'first_name', 'last_name', 'password')
+
 
 class CustomUserSerializer(UserCreateSerializer):
     is_subscribed = serializers.SerializerMethodField(read_only=True)
@@ -23,5 +24,6 @@ class CustomUserSerializer(UserCreateSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
-
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed')

@@ -5,19 +5,17 @@ services:
     image: postgres:12.4-alpine
     volumes:
         - postgres_data:/var/lib/postgresql/data/
-  #        env_file:
-  #            - ./backend/.env
-    environment:
-        POSTGRES_USER: pasha
-        POSTGRES_PASSWORD: pasha
-  #        ports:
-  #            - "5432:5432"
+    env_file:
+        - .env
+#    environment:
+#        POSTGRES_USER: pasha
+#        POSTGRES_PASSWORD: pasha
+#  #        ports:
+#  #            - "5432:5432"
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: keplian/final-front
     volumes:
-      - ../frontend/:/app/result_build/
+      - ../frontend:/app/result_build/
   nginx:
     image: nginx:1.19.3
     ports:
@@ -31,19 +29,20 @@ services:
       - media_volume:/var/html/media/
     depends_on:
       - backend
-      - frontend
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: keplian/final-back
+#    build:
+#      context: ../backend
+#      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_volume:/app/static/
       - media_volume:/app/media/
     depends_on:
       - db
-
+    env_file:
+      - ./.env
 volumes:
   postgres_data:
   static_volume:
