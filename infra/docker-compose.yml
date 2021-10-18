@@ -13,7 +13,7 @@ services:
 #  #        ports:
 #  #            - "5432:5432"
   frontend:
-    image: keplian/final-frontend
+    image: keplian/final-front
     volumes:
       - ../frontend:/app/result_build/
   nginx:
@@ -31,7 +31,7 @@ services:
       - backend
 
   backend:
-    image: keplian/final-backend
+    image: keplian/final-back
 #    build:
 #      context: ../backend
 #      dockerfile: Dockerfile
