@@ -29,7 +29,6 @@ services:
       - media_volume:/var/html/media/
     depends_on:
       - backend
-      - frontend
 
   backend:
     image: keplian/final-backend
