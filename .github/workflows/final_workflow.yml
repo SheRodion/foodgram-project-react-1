@@ -86,7 +86,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           stack_file_name: ./docker-compose.yml
           script: |
-            sudo docker pull keplian/final
+            sudo docker pull keplian/final-backend
+            sudo docker pull keplian/finak-frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
             touch .env
