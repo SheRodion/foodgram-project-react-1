@@ -38,13 +38,13 @@ class SubscribesSerializer(serializers.ModelSerializer):
         validators = (
             validators.UniqueTogetherValidator(
                 queryset=Subscribes.objects.all(),
-                fields=("subscriber", "subscribe_on"),
+                fields=('subscriber', 'subscribe_on'),
             ),
         )
 
     def validate(self, data):
         """User can not subscribe himself."""
-        if data["subscribe_on"] == self.context["request"].user:
+        if data['subscribe_on'] == self.context['request'].user:
             raise ValidationError("User can't follow himself")
         return data
 
@@ -76,7 +76,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create recipe with nested tag and ingredients/"""
         user = None
-        request = self.context.get("request")
+        request = self.context.get('request')
         if request and hasattr(request, "user"):
             user = request.user
         ingredients = validated_data.pop('recipe')
