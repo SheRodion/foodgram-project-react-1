@@ -32,7 +32,7 @@ services:
       - media_volume:/app/media/
     depends_on:
       - db
-    command: ["./wait-for-it.sh", "db:5432", "--", "python", "app.py"]
+    command: ["./wait-for-it.sh", "db:5432"]
     env_file:
       - ./.env
 volumes:
