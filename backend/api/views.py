@@ -102,7 +102,6 @@ def download_shopping_card(request, **kwargs):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ShoppingCart.pdf"'
     p = canvas.Canvas(response)
-    print(p.getAvailableFonts())
     pdfmetrics.registerFont(TTFont('DejaVuSans', './DejaVuSans.ttf'))
     p.setFont('DejaVuSans', 32)
     textobject = p.beginText(2 * cm, 29.7 * cm - 2 * cm)

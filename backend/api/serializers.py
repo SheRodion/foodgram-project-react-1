@@ -100,13 +100,9 @@ class RecipesSerializer(serializers.ModelSerializer):
         for item in validated_data:
             if Recipes._meta.get_field(item):
                 setattr(instance, item, validated_data[item])
-            print(instance)
             RecipeIngredient.objects.filter(recipes=instance).delete()
-        print(tags_updated)
         instance.tags.clear()
-        print(instance.tags)
         instance.tags.set(tags_updated)
-        print(instance.tags)
         for ingr in ingr_updated:
             i = get_object_or_404(Ingredients, id=ingr['ingredients']['id'].id)
             RecipeIngredient.objects.create(
