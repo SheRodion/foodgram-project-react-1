@@ -7,11 +7,6 @@ services:
         - postgres_data:/var/lib/postgresql/data/
     env_file:
         - ./.env
-#    environment:
-#        POSTGRES_USER: pasha
-#        POSTGRES_PASSWORD: pasha
-#  #        ports:
-#  #            - "5432:5432"
   frontend:
     image: keplian/final-frontend
     volumes:
@@ -28,13 +23,9 @@ services:
       - media_volume:/var/html/media/
     depends_on:
       - backend
-      - frontend
 
   backend:
     image: keplian/final-backend
-#    build:
-#      context: ../backend
-#      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_volume:/app/static/
