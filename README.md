@@ -1,4 +1,4 @@
-![badge workflow](https://github.com/keplian/foodgram-project-react/actions/workflows/final_workflow.yaml/badge.svg)
+![badge workflow](https://github.com/keplian/foodgram-project-react/actions/workflows/final_workflow.yml/badge.svg)
 
 
 Для локального запуска выполнить:
