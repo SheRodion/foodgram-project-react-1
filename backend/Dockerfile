@@ -7,7 +7,6 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 COPY . .
-RUN ["chmod", "+x", "./wait-for-it.sh"]
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
 CMD gunicorn backend.wsgi:application --bind 0.0.0.0:8000
