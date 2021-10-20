@@ -9,7 +9,7 @@ class RecipeFilter(filters.FilterSet):
         method='filter_is_in_shopping_cart'
     )
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
-    tags = filters.CharFilter(field_name='tags__slug')
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         """Return recipes in or not in user's shopping cart."""

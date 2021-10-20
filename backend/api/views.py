@@ -10,6 +10,8 @@ from reportlab.pdfgen import canvas
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from api.models import Ingredients, Recipes, Subscribes, Tags
 from api.serializers import (
@@ -53,6 +55,7 @@ class RecipesView(viewsets.ModelViewSet):
     permission_classes = (RecipePermissions,)
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    ordering = ['-pk']
 
 
 @api_view(['GET', 'DELETE'])
@@ -92,13 +95,16 @@ def get_or_delete_obj(request, **kwargs):
 def download_shopping_card(request, **kwargs):
     """Create and return pdf of all ingredients in shopping cart."""
     result_ingr = (
-        Recipes.objects.filter(shopping_card__user=request.user).order_by(
+        Recipes.objects.filter(recipe_in_shopping_card__user=request.user).order_by(
             'ingredients__name').values('ingredients__name',
                                         'ingredients__measurement_unit'
                                         ).annotate(total=Sum('recipe__amount')))
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ShoppingCart.pdf"'
     p = canvas.Canvas(response)
+    print(p.getAvailableFonts())
+    pdfmetrics.registerFont(TTFont('DejaVuSans', './DejaVuSans.ttf'))
+    p.setFont('DejaVuSans', 32)
     textobject = p.beginText(2 * cm, 29.7 * cm - 2 * cm)
     for result in result_ingr:
         textobject.textLine(

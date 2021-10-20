@@ -7,15 +7,15 @@ from .models import (Favorites, Ingredients, RecipeIngredient, Recipes,
 
 @admin.register(Recipes)
 class RecipesAdmin(admin.ModelAdmin):
-    list_display = ('author', 'name')
+    list_display = ('author', 'name', 'number_of_additions')
     empty_value_display = _('-empty-')
     list_filter = ('name', 'author', 'tags')
 
-    @admin.display(description='Numbers of additions')
-    def get_number_of_adittions(self, obj):
+    @admin.display(description='Number of additions in Favorites',)
+    def number_of_additions(self, obj):
         """Adds custom field - how many times recipe was added to favorites."""
 
-        return Favorites.objects.filter(recipe__in=[obj.pk]).count
+        return Favorites.objects.filter(recipe__in=[obj.pk]).count()
 
 
 @admin.register(RecipeIngredient)
