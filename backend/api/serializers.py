@@ -52,7 +52,7 @@ class SubscribesSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredients.id', queryset=Ingredients.objects.all()
+        source='ingredients.id', queryset=Ingredients.objects.all(), validators=(validators.UniqueValidator(queryset=Ingredients.objects.all()))
     )
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
