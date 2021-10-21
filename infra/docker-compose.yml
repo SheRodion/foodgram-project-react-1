@@ -3,6 +3,7 @@ services:
 
   db:
     image: postgres:12.4-alpine
+    container_name: db
     volumes:
         - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -13,6 +14,7 @@ services:
       - ../frontend/:/app/result_build/
   nginx:
     image: nginx:1.19.3
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
@@ -26,13 +28,13 @@ services:
 
   backend:
     image: keplian/final-backend
+    container_name: backend
     restart: always
     volumes:
       - static_volume:/app/static/
       - media_volume:/app/media/
     depends_on:
       - db
-    command: []
     env_file:
       - ./.env
 volumes:
