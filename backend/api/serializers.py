@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, validators
 from rest_framework.exceptions import ValidationError
@@ -53,16 +54,25 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         source='ingredients.id', queryset=Ingredients.objects.all()
     )
+    cooki
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit'
     )
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(min_value=1, max=100000)
 
     class Meta:
         model = RecipeIngredient
         exclude = ('recipes', 'ingredients')
-        extra_kwargs = {'id': {'read_only': False}}
+        extra_kwargs = {
+            'id':
+                {'read_only': False},
+            'amount':
+                {'error_messages': {
+                    'min_value': _('You need at least one ingredient')
+                }
+                }
+        }
 
 
 class RecipesSerializer(serializers.ModelSerializer):
@@ -130,6 +140,11 @@ class RecipesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipes
         fields = '__all__'
+        extra_kwargs = {
+            'cooking_time': {
+                'error_messages': {'min_value': _('Cooking time can not be '
+                                                  'less than 1 minute')}},
+        }
 
 
 class RecipeShortSerializer(RecipesSerializer):
