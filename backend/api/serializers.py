@@ -67,6 +67,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     def validate_amount(self, value):
         if value < 1:
             raise validators.ValidationError('Кол-во не может быть меньше 1')
+        return value
 
     class Meta:
         model = RecipeIngredient
