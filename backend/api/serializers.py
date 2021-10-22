@@ -104,7 +104,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     def validate_tags(self, value):
         if not value:
             raise serializers.ValidationError(
-                'Нужен как минимум один ингредиент'
+                'Нужен как минимум один тэг'
             )
         return value
 
