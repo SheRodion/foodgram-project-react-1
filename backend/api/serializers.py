@@ -94,7 +94,7 @@ class RecipesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нужен как минимум один ингредиент'
             )
-        list_of_id = (_['id'] for _ in value)
+        list_of_id = [_['id'] for _ in value]
         if len(list_of_id) != len(set(list_of_id)):
             raise serializers.ValidationError(
                 'Ингредиенты не должны дублироваться'
