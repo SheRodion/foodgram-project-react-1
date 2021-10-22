@@ -52,7 +52,7 @@ class SubscribesSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredients.id', queryset=Ingredients.objects.all(), validators=(validators.UniqueValidator(queryset=Ingredients.objects.all()), )
+        source='ingredients.id', queryset=Ingredients.objects.all(), validators=(validators.UniqueValidator(queryset=Ingredients.objects.all().values_list('id', flat=True)), )
     )
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -77,8 +77,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class RecipesSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    ingredients = RecipeIngredientSerializer(many=True, source='recipe')
-    tags = TagsSerializer(many=True)
+    ingredients = RecipeIngredientSerializer(many=True, source='recipe', required=True,)
+    tags = TagsSerializer(many=True, required=True)
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField(use_url=True)
 
