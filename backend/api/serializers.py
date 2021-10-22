@@ -52,35 +52,60 @@ class SubscribesSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredients.id', queryset=Ingredients.objects.all(), validators=(validators.UniqueValidator(queryset=Ingredients.objects.all().values_list('id', flat=True)), )
+        source='ingredients.id', queryset=Ingredients.objects.all()
     )
     name = serializers.ReadOnlyField(source='ingredients.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit'
     )
-    amount = serializers.IntegerField(min_value=1, max_value=100000, error_messages={'min_value': _('Нужен как минимум один ингредиент')})
+    amount = serializers.IntegerField(
+        min_value=1,
+        max_value=100000,
+        error_messages={'min_value': _('Кол-во не может быть меньше 1')},
+    )
 
     class Meta:
         model = RecipeIngredient
         exclude = ('recipes', 'ingredients')
         extra_kwargs = {
-            'id':
-                {'read_only': False},
-            'amount':
-                {'error_messages': {
+            'id': {'read_only': False},
+            'amount': {
+                'error_messages': {
                     'min_value': _('Нужен как минимум один ингредиент')
                 }
-                }
+            },
         }
 
 
 class RecipesSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    ingredients = RecipeIngredientSerializer(many=True, source='recipe', required=True,)
+    ingredients = RecipeIngredientSerializer(
+        many=True,
+        source='recipe',
+        required=True,
+    )
     tags = TagsSerializer(many=True, required=True)
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField(use_url=True)
+
+    def validate_ingredients(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                'Нужен как минимум один ингредиент'
+            )
+        list_of_id = (_['id'] for _ in value)
+        if len(list_of_id) != len(set(list_of_id)):
+            raise serializers.ValidationError(
+                'Ингредиенты не должны дублироваться'
+            )
+        return value
+
+    def validate_tags(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                'Нужен как минимум один ингредиент'
+            )
 
     def create(self, validated_data):
         """Create recipe with nested tag and ingredients/"""
@@ -141,7 +166,10 @@ class RecipesSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'cooking_time': {
-                'error_messages': {'min_value': _('Время готовки не может быть меньше 0')}},
+                'error_messages': {
+                    'min_value': _('Время готовки не может быть меньше 0')
+                }
+            },
         }
 
 
