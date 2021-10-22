@@ -58,7 +58,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit'
     )
-    amount = serializers.IntegerField(min_value=1, max_value=100000)
+    amount = serializers.IntegerField(min_value=1, max_value=100000, error_messages={'min_value': _('Нужен как минимум один ингредиент')})
 
     class Meta:
         model = RecipeIngredient
@@ -68,7 +68,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
                 {'read_only': False},
             'amount':
                 {'error_messages': {
-                    'min_value': _('You need at least one ingredient')
+                    'min_value': _('Нужен как минимум один ингредиент')
                 }
                 }
         }
@@ -141,8 +141,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'cooking_time': {
-                'error_messages': {'min_value': _('Cooking time can not be '
-                                                  'less than 1 minute')}},
+                'error_messages': {'min_value': _('Время готовки не может быть меньше 0')}},
         }
 
 
