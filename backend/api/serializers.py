@@ -64,6 +64,10 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         error_messages={'min_value': _('Кол-во не может быть меньше 1')},
     )
 
+    def validate_amount(self, value):
+        if value < 1:
+            raise validators.ValidationError('Кол-во не может быть меньше 1')
+
     class Meta:
         model = RecipeIngredient
         exclude = ('recipes', 'ingredients')
