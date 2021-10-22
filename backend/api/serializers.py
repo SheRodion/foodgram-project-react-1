@@ -176,6 +176,7 @@ class RecipesSerializer(serializers.ModelSerializer):
                     'min_value': _('Время готовки не может быть меньше 0')
                 }
             },
+            "ingredients": {"error_messages": {"amount": "сообщение"}}
         }
 
 
