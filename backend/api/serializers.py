@@ -106,6 +106,7 @@ class RecipesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нужен как минимум один ингредиент'
             )
+        return value
 
     def create(self, validated_data):
         """Create recipe with nested tag and ingredients/"""
