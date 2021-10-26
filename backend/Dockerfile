@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN apt-get install build-essential
+RUN apt-get install --no-cache build-essential
 RUN pip3 install -r requirements.txt
 
 COPY . .
