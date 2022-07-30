@@ -70,7 +70,7 @@ jobs:
           file: ./backend/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: keplian/final-backend
+          tags: sherodion/final-backend
       
       - name: Push to dockerhub
         uses: docker/build-push-action@v2
@@ -79,7 +79,7 @@ jobs:
           file: ./frontend/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: keplian/final-frontend
+          tags: sherodion/final-frontend
 
   deploy:
     name: Deploy image on server
@@ -98,8 +98,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           stack_file_name: ./docker-compose.yml
           script: |
-            sudo docker pull keplian/final-backend
-            sudo docker pull keplian/final-frontend
+            sudo docker pull sherodion/final-backend
+            sudo docker pull sherodion/final-frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose rm frontend
